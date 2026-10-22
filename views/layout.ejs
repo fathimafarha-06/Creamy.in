@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof title !== 'undefined' ? title : 'Creamy.in' %></title>
+  <!-- Tailwind via CDN with Creamy.in brand palette -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#FDFBF7',
+            beige: '#F5EBE0',
+            sand: '#EADBC8',
+            burgundy: '#6B1D2F',
+            wine: '#5B1E31',
+            gold: '#C9A227',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="bg-cream text-wine font-sans antialiased">
+  <%- include('partials/header') %>
+
+  <main class="min-h-[70vh]"><%- body %></main>
+
+  <!-- CART DRAWER OVERLAY -->
+  <div id="cartDrawer" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity">
+    <div class="fixed right-0 top-0 bottom-0 bg-cream w-full max-w-md p-6 flex flex-col justify-between shadow-2xl overflow-y-auto">
+      <div>
+        <div class="flex items-center justify-between border-b border-burgundy/15 pb-4">
+          <h2 class="font-serif text-2xl font-bold text-burgundy">Your Cart 🛒</h2>
+          <button onclick="toggleDrawer('cartDrawer')" class="text-2xl text-wine hover:text-burgundy">&times;</button>
+        </div>
+        <div id="cartItemsList" class="mt-4 space-y-4">
+          <!-- Cart items render here dynamically -->
+        </div>
+      </div>
+
+      <div class="border-t border-burgundy/15 pt-4 mt-6">
+        <div class="flex justify-between items-center text-lg font-bold text-burgundy mb-4">
+          <span>Total:</span>
+          <span id="cartTotalDisplay">₹0</span>
+        </div>
+
+        <!-- PAYMENT METHOD SELECTOR -->
+        <div class="mb-4 bg-beige/60 p-3.5 rounded-2xl space-y-2 text-sm">
+          <p class="font-bold text-burgundy text-xs uppercase tracking-wider mb-2">Select Payment Method</p>
+          
+          <label class="flex items-center gap-3 cursor-pointer p-2.5 rounded-xl border border-burgundy/10 bg-cream hover:bg-beige/50 transition">
+            <input type="radio" name="payMethod" value="UPI" checked class="accent-burgundy w-4 h-4" />
+            <span class="font-semibold text-burgundy">💳 GPay / PhonePe / Direct UPI</span>
+          </label>
+
+          <label class="flex items-center gap-3 cursor-pointer p-2.5 rounded-xl border border-burgundy/10 bg-cream hover:bg-beige/50 transition">
+            <input type="radio" name="payMethod" value="COD" class="accent-burgundy w-4 h-4" />
+            <span class="font-semibold text-burgundy">💵 Cash on Delivery (COD)</span>
+          </label>
+        </div>
+        
+        <button 
+          onclick="checkoutOrder()" 
+          class="w-full bg-burgundy hover:bg-wine text-cream font-bold py-3.5 px-6 rounded-full transition shadow-lg flex items-center justify-center gap-2">
+          <span>🚀</span>
+          <span>Place Order Now</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WISHLIST DRAWER OVERLAY -->
+  <div id="wishlistDrawer" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity">
+    <div class="fixed right-0 top-0 bottom-0 bg-cream w-full max-w-md p-6 flex flex-col justify-between shadow-2xl overflow-y-auto">
+      <div>
+        <div class="flex items-center justify-between border-b border-burgundy/15 pb-4">
+          <h2 class="font-serif text-2xl font-bold text-burgundy">Your Wishlist ❤️</h2>
+          <button onclick="toggleDrawer('wishlistDrawer')" class="text-2xl text-wine hover:text-burgundy">&times;</button>
+        </div>
+        <div id="wishlistItemsList" class="mt-4 space-y-4">
+          <!-- Wishlist items render here dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <!-- GLOBAL DRAWER & CHECKOUT HELPER -->
+  <script>
+    function toggleDrawer(drawerId) {
+      const drawer = document.getElementById(drawerId);
+      if (drawer) {
+        drawer.classList.toggle('hidden');
+      }
+    }
+
+    function checkoutOrder() {
+      const totalText = document.getElementById('cartTotalDisplay')?.innerText || '₹0';
+      const numericTotal = totalText.replace(/[^0-9]/g, '') || '0';
+      
+      if (numericTotal === '0') {
+        alert("Your cart is empty! Please add items before placing an order.");
+        return;
+      }
+
+      const selectedMethodEl = document.querySelector('input[name="payMethod"]:checked');
+      const paymentMethod = selectedMethodEl ? selectedMethodEl.value : 'UPI';
+
+      const upiID = "shahulrayan03@okioki";
+      const payeeName = "Creamy.in Bakery";
+      const adminWhatsApp = "917845550886";
+
+      if (paymentMethod === 'UPI') {
+        const upiLink = `upi://pay?pa=${upiID}&pn=${encodeURIComponent(payeeName)}&am=${numericTotal}&cu=INR`;
+        const message = `🎂 *NEW ORDER (Pre-Paid via UPI)* 🎂\n\n*Total Paid:* ${totalText}\n*Payment Method:* Direct GPay/UPI (${upiID})\n\nPlease confirm my order! ✨`;
+        const whatsappLink = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
+
+        window.location.href = upiLink;
+        setTimeout(() => {
+          window.open(whatsappLink, '_blank');
+        }, 2000);
+      } else {
+        const message = `🎂 *NEW ORDER (Cash on Delivery)* 🎂\n\n*Total Amount:* ${totalText}\n*Payment Method:* 💵 Cash on Delivery (COD)\n\nPlease accept and prepare my order! ✨`;
+        const whatsappLink = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
+
+        window.open(whatsappLink, '_blank');
+      }
+    }
+  </script>
+
+  <script src="/js/store.js"></script>
+</body>
+</html>

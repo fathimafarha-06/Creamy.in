@@ -1,0 +1,41 @@
+<!-- Top offer strip (admin-editable) -->
+<% if (typeof offer !== 'undefined' && offer && offer.active) { %>
+  <div class="bg-wine text-cream text-center text-xs sm:text-sm py-2 px-4 tracking-wide">
+    <span class="font-semibold"><%= offer.badge %></span>
+    <span class="mx-2 opacity-50">•</span>
+    <span><%= offer.title %></span>
+  </div>
+<% } %>
+
+<header class="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-burgundy/15">
+  <nav class="max-w-7xl mx-auto flex items-center justify-between gap-3 px-4 sm:px-6 py-3">
+    <a href="/" class="flex items-center gap-2">
+      <span class="w-10 h-10 rounded-full bg-burgundy text-cream grid place-items-center font-serif text-xl font-bold">C</span>
+      <span class="font-serif text-2xl font-bold text-burgundy">Creamy<span class="text-gold">.in</span></span>
+    </a>
+
+    <div class="hidden md:flex items-center gap-6 text-sm font-medium">
+      <a href="/#menu" class="hover:text-burgundy">Categories</a>
+      <a href="/customize" class="hover:text-burgundy">Customize Cake</a>
+      <a href="/#about" class="hover:text-burgundy">About Us</a>
+      <a href="/#contact" class="hover:text-burgundy">Contact Us</a>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button onclick="toggleDrawer('wishlistDrawer')" title="Wishlist" class="relative px-3 py-2 rounded-full border border-burgundy/25 hover:bg-beige">
+        ❤️ <span id="wishCount" class="absolute -top-1 -right-1 bg-burgundy text-cream text-[10px] w-5 h-5 rounded-full grid place-items-center">0</span>
+      </button>
+      <button onclick="toggleDrawer('cartDrawer')" title="Cart" class="relative px-3 py-2 rounded-full border border-burgundy/25 hover:bg-beige">
+        🛒 <span id="cartCount" class="absolute -top-1 -right-1 bg-burgundy text-cream text-[10px] w-5 h-5 rounded-full grid place-items-center">0</span>
+      </button>
+      <a href="/#menu" class="hidden sm:inline-block bg-burgundy hover:bg-wine text-cream font-semibold px-5 py-2.5 rounded-full transition">Order Now</a>
+      <button class="md:hidden px-3 py-2" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">☰</button>
+    </div>
+  </nav>
+  <div id="mobileMenu" class="hidden md:hidden border-t border-burgundy/10 px-6 py-3 flex gap-5 text-sm font-medium bg-cream">
+    <a href="/#menu">Categories</a>
+    <a href="/customize">Customize Cake</a>
+    <a href="/#about">About Us</a>
+    <a href="/#contact">Contact Us</a>
+  </div>
+</header>

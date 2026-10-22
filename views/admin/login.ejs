@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { cream:'#FDFBF7', beige:'#F5EBE0', burgundy:'#6B1D2F', wine:'#5B1E31', gold:'#C9A227' }, fontFamily: { serif:['"Playfair Display"','serif'], sans:['Inter','sans-serif'] } } } };</script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body class="bg-beige min-h-screen grid place-items-center font-sans px-4">
+  <div class="bg-cream w-full max-w-md rounded-3xl shadow-2xl p-8 border border-burgundy/10">
+    <p class="font-serif text-3xl font-bold text-burgundy text-center">Creamy<span class="text-gold">.in</span></p>
+    <p class="text-center text-sm text-wine/60 mt-1">Admin Portal · Secure Login</p>
+    <% if (error) { %><div class="mt-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3"><%= error %></div><% } %>
+    <form action="/admin/login" method="POST" class="mt-6 space-y-4">
+      <div><label class="text-sm font-semibold">Username</label><input name="username" required autocomplete="username" class="mt-1 w-full border border-burgundy/20 rounded-xl px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-burgundy/40" placeholder="admin" /></div>
+      <div><label class="text-sm font-semibold">Password</label><input name="password" type="password" required autocomplete="current-password" class="mt-1 w-full border border-burgundy/20 rounded-xl px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-burgundy/40" placeholder="••••••••" /></div>
+      <button class="w-full bg-burgundy hover:bg-wine text-cream font-bold py-3 rounded-full transition">Login → Dashboard</button>
+    </form>
+    <a href="/" class="block text-center text-sm mt-4 underline opacity-70">← Back to store</a>
+  </div>
+</body>
+</html>

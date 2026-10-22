@@ -1,0 +1,39 @@
+<% layout('layout') -%>
+<section class="max-w-4xl mx-auto px-6 py-12">
+  <p class="text-burgundy font-bold tracking-widest text-xs uppercase">Custom Studio</p>
+  <h1 class="font-serif text-4xl font-bold text-burgundy mt-1">Design your dream cake 🎂</h1>
+  <p class="text-wine/70 mt-2">Fill this in — we save it to the admin dashboard and you can also send it instantly on WhatsApp.</p>
+
+  <div class="grid md:grid-cols-2 gap-8 mt-8">
+    <img src="/images/coffe4.jpg" alt="Custom cake" class="rounded-3xl h-80 w-full object-cover shadow" />
+    <form action="/customize" method="POST" class="card space-y-4" onsubmit="return customizeViaWhatsApp(event)">
+      <div class="grid grid-cols-2 gap-3">
+        <input name="name" id="cName" required placeholder="Your name" class="input" />
+        <input name="phone" id="cPhone" required placeholder="Phone" class="input" />
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <select name="flavour" id="cFlavour" class="input">
+          <option>Vanilla</option><option>Chocolate</option><option>Red Velvet</option>
+          <option>Butterscotch</option><option>Pineapple</option><option>Coffee Mocha</option>
+        </select>
+        <select name="size" id="cSize" class="input">
+          <option>0.5 kg</option><option selected>1 kg</option><option>1.5 kg</option><option>2 kg</option>
+        </select>
+      </div>
+      <input name="date" id="cDate" type="date" class="input" />
+      <textarea name="message" id="cMsg" rows="3" placeholder="Message on cake / design notes…" class="input"></textarea>
+      <button class="w-full bg-burgundy hover:bg-wine text-cream font-bold py-3 rounded-full">Save Request</button>
+      <button type="button" onclick="customizeViaWhatsApp(event, true)" class="w-full bg-[#25D366] text-white font-bold py-3 rounded-full">Send via WhatsApp</button>
+    </form>
+  </div>
+</section>
+
+<script>
+function customizeViaWhatsApp(e, waOnly) {
+  const v = (id) => document.getElementById(id).value;
+  const msg = `Hi Creamy.in! I want a CUSTOM CAKE%0A%0AName: ${encodeURIComponent(v('cName'))}%0APhone: ${encodeURIComponent(v('cPhone'))}%0AFlavour: ${encodeURIComponent(v('cFlavour'))}%0ASize: ${encodeURIComponent(v('cSize'))}%0ADate: ${encodeURIComponent(v('cDate'))}%0ADesign: ${encodeURIComponent(v('cMsg'))}`;
+  window.open(`https://wa.me/917845550886?text=${msg}`, '_blank');
+  if (waOnly) { e.preventDefault(); return false; }
+  return true; // also POST to server for dashboard record
+}
+</script>

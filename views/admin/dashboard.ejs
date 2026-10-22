@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { cream:'#FDFBF7', beige:'#F5EBE0', sand:'#EADBC8', burgundy:'#6B1D2F', wine:'#5B1E31', gold:'#C9A227' }, fontFamily: { serif:['"Playfair Display"','serif'], sans:['Inter','sans-serif'] } } } };</script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="bg-cream text-wine font-sans">
+<header class="bg-wine text-cream sticky top-0 z-30">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a href="/admin/dashboard" class="font-serif text-2xl font-bold">Creamy<span class="text-gold">.in</span> <span class="text-xs font-sans font-normal opacity-70">Admin</span></a>
+    <div class="flex items-center gap-3 text-sm">
+      <span class="opacity-80">Hi, <%= adminName %></span>
+      <a href="/" class="underline opacity-80">View Store</a>
+      <a href="/admin/logout" class="bg-cream text-wine font-semibold px-4 py-1.5 rounded-full">Logout</a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 py-8 space-y-10">
+  <% if (query.saved) { %><div class="bg-green-50 border border-green-200 text-green-800 rounded-xl px-4 py-3 text-sm">✓ Menu item saved.</div><% } %>
+  <% if (query.deleted) { %><div class="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">Item deleted.</div><% } %>
+  <% if (query.offer) { %><div class="bg-green-50 border border-green-200 text-green-800 rounded-xl px-4 py-3 text-sm">✓ Offer banner updated on storefront.</div><% } %>
+
+  <!-- STATS -->
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-beige rounded-2xl p-5 border border-burgundy/10"><p class="text-xs font-bold uppercase tracking-widest opacity-60">Revenue</p><p class="font-serif text-3xl font-bold text-burgundy">₹<%= stats.revenue.toLocaleString('en-IN') %></p></div>
+    <div class="bg-beige rounded-2xl p-5 border border-burgundy/10"><p class="text-xs font-bold uppercase tracking-widest opacity-60">Orders</p><p class="font-serif text-3xl font-bold text-burgundy"><%= stats.orders %></p></div>
+    <div class="bg-beige rounded-2xl p-5 border border-burgundy/10"><p class="text-xs font-bold uppercase tracking-widest opacity-60">Menu Items</p><p class="font-serif text-3xl font-bold text-burgundy"><%= stats.items %></p></div>
+    <div class="bg-burgundy text-cream rounded-2xl p-5"><p class="text-xs font-bold uppercase tracking-widest opacity-70">New Orders</p><p class="font-serif text-3xl font-bold"><%= stats.fresh %></p></div>
+  </section>
+
+  <!-- OFFER -->
+  <section id="offer" class="bg-white rounded-3xl border border-burgundy/10 p-6 md:p-8">
+    <h2 class="font-serif text-2xl font-bold text-burgundy">📢 Offers & Banner</h2>
+    <p class="text-sm opacity-60">Updates the top strip + hero badge on the customer storefront instantly.</p>
+    <form action="/admin/offer" method="POST" class="grid md:grid-cols-4 gap-3 mt-4">
+      <input name="badge" value="<%- offer.badge || '' %>" placeholder="Badge (e.g. Festive Offer)" class="border border-burgundy/20 rounded-xl px-4 py-2.5" />
+      <input name="title" value="<%- offer.title || '' %>" placeholder="Offer title" class="border border-burgundy/20 rounded-xl px-4 py-2.5 md:col-span-2" />
+      <label class="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" name="active" <%= offer.active === false ? '' : 'checked' %> class="w-5 h-5 accent-[#6B1D2F]" /> Active</label>
+      <input name="subtitle" value="<%- offer.subtitle || '' %>" placeholder="Subtitle / announcement" class="border border-burgundy/20 rounded-xl px-4 py-2.5 md:col-span-3" />
+      <button class="bg-burgundy text-cream font-bold rounded-xl px-6">Update Offer</button>
+    </form>
+  </section>
+
+  <!-- ADD ITEM -->
+  <section class="bg-white rounded-3xl border border-burgundy/10 p-6 md:p-8">
+    <h2 class="font-serif text-2xl font-bold text-burgundy">➕ Add Menu Item</h2>
+    <form action="/admin/items" method="POST" class="grid md:grid-cols-3 gap-3 mt-4">
+      <input name="title" required placeholder="Title (e.g. Red Velvet Cake)" class="border border-burgundy/20 rounded-xl px-4 py-2.5" />
+      <input name="price" required type="number" min="1" placeholder="Price ₹" class="border border-burgundy/20 rounded-xl px-4 py-2.5" />
+      <select name="category" class="border border-burgundy/20 rounded-xl px-4 py-2.5"><% categories.forEach(c => { %><option><%= c %></option><% }) %></select>
+      <input name="image" placeholder="Image path (e.g. /images/bread.jpg)" class="border border-burgundy/20 rounded-xl px-4 py-2.5 md:col-span-2" list="imgList" />
+      <label class="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" name="available" checked class="w-5 h-5 accent-[#6B1D2F]" /> Available</label>
+      <input name="description" placeholder="Short description" class="border border-burgundy/20 rounded-xl px-4 py-2.5 md:col-span-3" />
+      <datalist id="imgList">
+        <option value="/images/bread.jpg"></option><option value="/images/bread2.jpg"></option>
+        <option value="/images/bread3.jpg"></option><option value="/images/bread4.jpg"></option>
+        <option value="/images/coffe1.jpg"></option><option value="/images/coffe2.jpg"></option>
+        <option value="/images/coffe3.jpg"></option><option value="/images/coffe4.jpg"></option>
+        <option value="/images/cupcake2.jpg"></option><option value="/images/cupcake3.jpg"></option>
+        <option value="/images/do1.jpg"></option><option value="/images/do2.jpg"></option>
+        <option value="/images/do3.jpg"></option><option value="/images/do4.jpg"></option>
+        <option value="/images/pa1.jpg"></option><option value="/images/pa2.jpg"></option>
+        <option value="/images/pa3.jpg"></option><option value="/images/pa4.jpg"></option>
+      </datalist>
+      <button class="bg-burgundy text-cream font-bold rounded-xl px-6 py-2.5 md:col-span-3">Add Item</button>
+    </form>
+    <p class="text-xs opacity-60 mt-2">Tip: files with spaces (e.g. <code>cup cake 1.jpg</code>) should be referenced as <code>/images/cup%20cake%201.jpg</code>.</p>
+  </section>
+
+  <!-- MENU TABLE -->
+  <section id="menu" class="bg-white rounded-3xl border border-burgundy/10 p-6 md:p-8 overflow-x-auto">
+    <h2 class="font-serif text-2xl font-bold text-burgundy mb-4">🍰 Menu Items (<%= items.length %>)</h2>
+    <table class="w-full text-sm min-w-[760px]">
+      <thead><tr class="text-left text-xs uppercase tracking-widest opacity-60 border-b"><th class="py-2">Item</th><th>Category</th><th>Price</th><th>Visible</th><th class="text-right">Actions</th></tr></thead>
+      <tbody>
+      <% items.forEach(it => { %>
+        <tr class="border-b border-burgundy/10">
+          <td class="py-2 pr-3">
+            <form action="/admin/items/<%= it._id %>/edit" method="POST" class="flex flex-wrap gap-2 items-center">
+              <img src="<%= it.image %>" onerror="this.src='/images/bread.jpg'" class="w-10 h-10 rounded-lg object-cover" alt="" />
+              <input name="title" value="<%- it.title %>" class="border rounded-lg px-2 py-1 w-40" />
+              <input name="image" value="<%= it.image %>" class="border rounded-lg px-2 py-1 w-44 text-xs" />
+              <input name="description" value="<%- it.description || '' %>" class="border rounded-lg px-2 py-1 w-48 text-xs" placeholder="desc" />
+              <select name="category" class="border rounded-lg px-2 py-1"><% categories.forEach(c => { %><option <%= it.category===c?'selected':'' %>><%= c %></option><% }) %></select>
+              <input name="price" type="number" value="<%= it.price %>" class="border rounded-lg px-2 py-1 w-24" />
+              <label class="text-xs font-semibold flex items-center gap-1"><input type="checkbox" name="available" <%= it.available?'checked':'' %> class="accent-[#6B1D2F]" /> Live</label>
+              <button class="bg-beige border border-burgundy/20 rounded-lg px-3 py-1 font-semibold">Save</button>
+            </form>
+          </td>
+          <td><%= it.category %></td><td class="font-bold">₹<%= it.price %></td>
+          <td><%= it.available ? '✅' : '🚫' %></td>
+          <td class="text-right">
+            <form action="/admin/items/<%= it._id %>/delete" method="POST" onsubmit="return confirm('Delete this item?')"><button class="text-red-700 underline text-xs">Delete</button></form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ORDERS -->
+  <section id="orders" class="bg-white rounded-3xl border border-burgundy/10 p-6 md:p-8">
+    <h2 class="font-serif text-2xl font-bold text-burgundy mb-1">🧾 Orders (latest <%= orders.length %>)</h2>
+    <p class="text-sm opacity-60 mb-4">Every WhatsApp checkout is also stored here automatically.</p>
+    <div class="space-y-4">
+      <% if (orders.length === 0) { %><p class="text-sm opacity-60">No orders yet — share your store link on WhatsApp to get the first one.</p><% } %>
+      <% orders.forEach(o => { %>
+        <div class="border border-burgundy/10 rounded-2xl p-4 grid md:grid-cols-3 gap-3">
+          <div>
+            <p class="font-bold"><%= o.customerName %> <span class="text-xs font-normal opacity-60">(<%= o.source %>)</span></p>
+            <p class="text-xs opacity-70"><%= o.customerPhone %> · <%= new Date(o.createdAt).toLocaleString('en-IN') %></p>
+            <p class="text-xs mt-1 opacity-70"><%= o.address %><%= o.note ? ' · ' + o.note : '' %></p>
+            <ul class="text-sm mt-2"><% o.items.forEach(i => { %><li>• <%= i.title %> × <%= i.qty %> — ₹<%= i.price * i.qty %></li><% }) %></ul>
+            <p class="font-bold mt-1">Total: ₹<%= o.total %></p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold px-3 py-1 rounded-full <%= o.status==='New'?'bg-gold/20 text-wine':o.status==='Cancelled'?'bg-red-100 text-red-700':'bg-green-100 text-green-800' %>"><%= o.status %></span>
+          </div>
+          <div class="flex flex-wrap gap-2 md:justify-end items-start">
+            <form action="/admin/orders/<%= o._id %>/status" method="POST" class="flex gap-2">
+              <select name="status" class="border rounded-lg px-2 py-1 text-sm">
+                <% ['New','Confirmed','Baking','Delivered','Cancelled'].forEach(s => { %><option <%= o.status===s?'selected':'' %>><%= s %></option><% }) %>
+              </select>
+              <button class="bg-wine text-cream text-sm font-semibold px-4 py-1.5 rounded-lg">Update</button>
+            </form>
+            <form action="/admin/orders/<%= o._id %>/delete" method="POST" onsubmit="return confirm('Delete order?')"><button class="text-xs underline text-red-700">Delete</button></form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+</main>
+</body>
+</html>

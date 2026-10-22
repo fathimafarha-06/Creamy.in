@@ -1,0 +1,145 @@
+<% layout('layout') -%>
+
+<!-- HERO — warm beige + burgundy artisan banner using local images -->
+<section class="relative overflow-hidden bg-beige">
+  <div class="max-w-7xl mx-auto px-6 py-12 md:py-20 grid md:grid-cols-2 gap-10 items-center">
+    <div>
+      <% if (typeof offer !== 'undefined' && offer && offer.active) { %>
+        <span class="inline-block bg-burgundy/10 text-burgundy text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full border border-burgundy/20"><%= offer.badge %></span>
+      <% } %>
+      <h1 class="font-serif text-4xl md:text-6xl font-extrabold text-burgundy leading-tight mt-4">
+        Baked with love,<br />served with <span class="italic text-wine">warmth.</span>
+      </h1>
+      <p class="mt-4 text-wine/70 max-w-md">
+        <%= (typeof offer !== 'undefined' && offer && offer.subtitle) ? offer.subtitle : 'Artisan breads, cakes & cookies from our home oven in Kilakarai.' %>
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="#menu" class="bg-burgundy hover:bg-wine text-cream font-semibold px-7 py-3 rounded-full transition shadow-lg">Order Now</a>
+        <a href="/customize" class="border-2 border-burgundy text-burgundy hover:bg-burgundy hover:text-cream font-semibold px-7 py-3 rounded-full transition">Customize Cake</a>
+      </div>
+      <div class="mt-6 flex items-center gap-4 text-sm text-wine/70">
+        <span>⭐ 4.9 loved locally</span><span>·</span><span>📍 Kilakarai</span><span>·</span><span>📞 +91 7845550886</span>
+      </div>
+    </div>
+    <div class="relative">
+      <div class="grid grid-cols-2 gap-3">
+        <img src="/images/bread.jpg" alt="Fresh bread" class="hero-img h-56 md:h-72" />
+        <img src="/images/coffe2.jpg" alt="Chocolate cake" class="hero-img h-56 md:h-72 mt-6" />
+        <img src="/images/cupcake2.jpg" alt="Cupcakes" class="hero-img h-48 md:h-60 -mt-2" />
+        <img src="/images/do2.jpg" alt="Donuts" class="hero-img h-48 md:h-60 mt-4" />
+      </div>
+      <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-wine text-cream px-6 py-3 rounded-full shadow-xl text-sm font-semibold whitespace-nowrap">
+        <%= (typeof offer !== 'undefined' && offer && offer.title) ? offer.title : 'Fresh every morning · 9 AM' %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORY FILTER -->
+<section id="menu" class="max-w-7xl mx-auto px-6 pt-14">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-burgundy font-bold tracking-widest text-xs uppercase">Our Menu</p>
+      <h2 class="font-serif text-3xl md:text-4xl font-bold text-burgundy">Pick your craving</h2>
+    </div>
+    <div class="flex flex-wrap gap-2" id="filters">
+      <button data-cat="All" class="filter-btn active">All</button>
+      <button data-cat="Cakes" class="filter-btn">Cakes</button>
+      <button data-cat="Cupcakes" class="filter-btn">Cupcakes</button>
+      <button data-cat="Cookies" class="filter-btn">Cookies</button>
+      <button data-cat="Custom Cakes" class="filter-btn">Custom Cakes</button>
+    </div>
+  </div>
+
+  <!-- Server-rendered grid (works even without JS); JS adds filtering + cart wiring -->
+  <div id="menuGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
+    <% (items || []).forEach(function(p) { %>
+      <article class="card menu-card" data-category="<%= p.category %>" data-id="<%= p._id %>" data-title="<%- p.title %>" data-price="<%= p.price %>" data-image="<%= p.image %>">
+        <div class="relative overflow-hidden rounded-2xl">
+          <img src="<%= p.image %>" alt="<%- p.title %>" loading="lazy" class="w-full h-52 object-cover hover:scale-105 transition duration-500" onerror="this.src='/images/bread.jpg'" />
+          <button onclick="toggleWish('<%= p._id %>')" class="absolute top-3 right-3 bg-cream/90 rounded-full w-9 h-9 grid place-items-center shadow" title="Add to wishlist">❤️</button>
+          <span class="absolute top-3 left-3 bg-wine text-cream text-[11px] font-bold px-3 py-1 rounded-full"><%= p.category %></span>
+        </div>
+        <div class="pt-4">
+          <h3 class="font-serif text-lg font-bold text-burgundy leading-snug"><%- p.title %></h3>
+          <p class="text-sm text-wine/60 mt-1 line-clamp-2"><%= p.description || '' %></p>
+          <div class="flex items-center justify-between mt-3">
+            <span class="font-bold text-lg text-burgundy">₹<%= p.price %></span>
+            <button onclick="addToCart('<%= p._id %>')" class="bg-burgundy hover:bg-wine text-cream text-sm font-semibold px-5 py-2 rounded-full transition">Add 🛒</button>
+          </div>
+        </div>
+      </article>
+    <% }) %>
+  </div>
+  <% if (!items || items.length === 0) { %>
+    <p class="text-center text-wine/60 py-10">Menu is being baked… please run <code>npm run seed</code> or add items from the admin dashboard.</p>
+  <% } %>
+
+  <!-- Embed menu JSON for instant client-side cart/wishlist (no extra fetch needed) -->
+  <script id="menu-data" type="application/json"><%- JSON.stringify(items || []) %></script>
+</section>
+
+<!-- CUSTOMIZE STRIP -->
+<section class="max-w-7xl mx-auto px-6 mt-14">
+  <div class="rounded-3xl bg-burgundy text-cream p-8 md:p-12 grid md:grid-cols-2 gap-8 items-center overflow-hidden relative">
+    <div>
+      <h2 class="font-serif text-3xl md:text-4xl font-bold">Dream it. We bake it. 🎂</h2>
+      <p class="mt-3 text-cream/80">Photo cakes, wedding tiers, theme birthdays — share your idea on WhatsApp and get a quote within hours.</p>
+      <div class="mt-6 flex gap-3">
+        <a href="/customize" class="bg-cream text-wine font-bold px-6 py-3 rounded-full">Customize Cake</a>
+        <a href="https://wa.me/917845550886?text=Hi%20Creamy.in!%20I%20want%20a%20custom%20cake." target="_blank" rel="noopener" class="border border-cream/50 px-6 py-3 rounded-full font-semibold">WhatsApp Us</a>
+      </div>
+    </div>
+    <img src="/images/pa4.jpg" alt="Custom cake" class="rounded-2xl h-64 w-full object-cover shadow-2xl" />
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="max-w-7xl mx-auto px-6 mt-14 grid md:grid-cols-2 gap-10 items-center mb-12">
+  <img src="/images/bread4.jpg" alt="Our bakery" class="rounded-3xl h-80 w-full object-cover shadow" />
+  <div>
+    <p class="text-burgundy font-bold tracking-widest text-xs uppercase">About Us</p>
+    <h2 class="font-serif text-3xl md:text-4xl font-bold text-burgundy mt-1">A little home bakery with a big heart</h2>
+    <p class="mt-4 text-wine/70 leading-relaxed">Creamy.in started in a home kitchen on Sangu Vetti Street, Kilakarai. Every loaf, cupcake and cookie is mixed, proofed and frosted by hand — no premixes, no shortcuts. Order online, pay on delivery, and taste the difference of slow baking.</p>
+    <ul class="mt-4 space-y-2 text-sm text-wine/80">
+      <li>✓ Eggless options available</li>
+      <li>✓ Same-day delivery in Kilakarai</li>
+      <li>✓ Custom designs with 24h notice</li>
+    </ul>
+  </div>
+</section>
+
+<!-- GPAY / UPI PAYMENT INTEGRATION SCRIPT -->
+<script>
+function checkoutWithGPay(totalAmount, customerName, address, itemsList) {
+  const upiID = "shahulrayan03@okioki";
+  const payeeName = "Creamy.in Bakery";
+
+  // 1. Create UPI deep-link (triggers GPay / PhonePe / Paytm on mobile)
+  const upiLink = `upi://pay?pa=${upiID}&pn=${encodeURIComponent(payeeName)}&am=${totalAmount}&cu=INR`;
+
+  // 2. Build WhatsApp confirmation message
+  const adminWhatsApp = "917845550886";
+  const message = 
+`🎂 *NEW ORDER - Creamy.in* 🎂
+
+*Items:* ${itemsList || 'Bakery Items'}
+*Total Amount:* ₹${totalAmount}
+
+*Customer Name:* ${customerName || 'Valued Customer'}
+*Address:* ${address || 'Kilakarai'}
+*Payment Method:* GPay / UPI (${upiID})
+
+Please confirm and process my order! ✨`;
+
+  const whatsappLink = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
+
+  // 3. Open UPI Payment application first
+  window.location.href = upiLink;
+
+  // 4. Redirect to WhatsApp after 2.5 seconds to dispatch order details
+  setTimeout(() => {
+    window.open(whatsappLink, '_blank');
+  }, 2500);
+}
+</script>

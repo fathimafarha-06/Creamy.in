@@ -1,0 +1,64 @@
+/* Creamy.in — small custom layer on top of Tailwind. Brand: beige + burgundy. */
+html { scroll-behavior: smooth; }
+body { background: #FDFBF7; }
+
+.card {
+  background: #fff;
+  border: 1px solid rgba(107, 29, 47, 0.12);
+  border-radius: 1.25rem;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(91, 30, 49, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(91, 30, 49, 0.12); }
+
+.hero-img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 1.25rem;
+  box-shadow: 0 18px 40px rgba(91, 30, 49, 0.18);
+  border: 4px solid #FDFBF7;
+}
+
+.filter-btn {
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid rgba(107, 29, 47, 0.3);
+  color: #6B1D2F;
+  background: #fff;
+}
+.filter-btn.active, .filter-btn:hover { background: #6B1D2F; color: #FDFBF7; }
+
+.input {
+  width: 100%;
+  border: 1px solid rgba(107, 29, 47, 0.2);
+  border-radius: 0.8rem;
+  padding: 0.65rem 0.9rem;
+  background: #fff;
+  font-size: 0.9rem;
+}
+.input:focus { outline: none; box-shadow: 0 0 0 3px rgba(107, 29, 47, 0.15); }
+
+/* Slide-in drawers for cart + wishlist */
+.drawer {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(43, 12, 20, 0.45);
+  opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+}
+.drawer.open { opacity: 1; pointer-events: auto; }
+.drawer-panel {
+  position: absolute; right: 0; top: 0; height: 100%;
+  width: min(420px, 92vw);
+  background: #FDFBF7;
+  padding: 1.25rem;
+  display: flex; flex-direction: column;
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.25);
+  transform: translateX(20px); transition: transform 0.25s ease;
+}
+.drawer.open .drawer-panel { transform: none; }
+
+.line-clamp-2 {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
